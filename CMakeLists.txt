@@ -33,6 +33,8 @@ file(GLOB TARGET_SRC
         "${CMAKE_CURRENT_SOURCE_DIR}/features/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/graphics/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/graphics/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/io/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/io/*.cpp"
 )
 
 add_library(${PROJECT_NAME} SHARED ${TARGET_SRC})

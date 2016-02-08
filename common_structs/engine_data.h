@@ -4,22 +4,22 @@
 #include "common_structs/routing_data.h"
 #include "common_structs/camera_data.h"
 #include "common_structs/display_data.h"
-#include "common_structs/camera_data.h"
-#include "communication/zmq/zmq_publisher.h"
+//#include "common_structs/camera_data.h"
+//#include "communication/zmq/zmq_publisher.h"
 
-#include <string>
+//#include <string>
 
 namespace Engine
 {
     struct EngineData
     {
-        EngineData(const CameraData& camera_data, const DisplayData& display_data)
-            : m_camera_data(camera_data), m_display_data(display_data)
+        EngineData(const DisplayData& display_data)
+            : m_display_data(display_data)
         {
         }
 
         const DisplayData m_display_data;
-        const CameraData m_camera_data;
+        //const CameraData m_camera_data;
     };
 }
 

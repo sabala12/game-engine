@@ -7,7 +7,7 @@
 #include "graphics/camera.h"
 #include "constraints/game_object_constraint.h"
 #include "communication/zmq/zmq_publisher.h"
-#include "components/key_events_handler.h"
+#include "io/io_events_handler.h"
 
 #include <SDL2/SDL.h>
 #include <typeinfo>
@@ -15,7 +15,8 @@
 #include <map>
 #include <vector>
 #include <string>
-#include <common_structs/engine_data.h>
+#include "common_structs/engine_data.h"
+#include "common_structs/camera_data.h"
 
 namespace Engine
 {
@@ -26,64 +27,72 @@ namespace Engine
 	{
 	public:
         typedef ZmqPublisher<std::string> Publisher;
-        typedef std::vector<Object*> objects_vec;
-		typedef std::map<std::type_index, objects_vec> objects_map;
+        typedef std::map<std::string, Camera*> CamerasMap;
+		//typedef std::map<std::type_index, ObjectsVec> ObjectsMap;
+        typedef std::vector<Object*> ObjectsVec;
+        typedef std::map<Uint32, Object*> ObjectsMap;
 
-		Engine(const EngineData& engine_data);
+		Engine(const EngineData&);
 		virtual ~Engine();
 
-		void Start(const RoutingData& m_routing_data);
+		void Start();
 		void Stop();
-
         void Awake();
 		void Update();
 		void Render();
+        //void AddCamera(const std::string& key, const CameraData&);
+        //void RemoveCamera(const std::string& key);
 
         template <class T> void AddObject(T*);
-        template <class T> const objects_vec& GetObjects();
-
+        template <class T> void GetObjects(ObjectsVec& objectsVec);
 
     private:
-		KeyEventsHandler<Publisher > &m_key_events_handler;
-        objects_map m_objects;
+        ObjectsMap m_objects;
         Display m_display;
-        Camera m_camera;
+        //Camera m_camera;
 	};
 
     template <class T>
     void Engine::AddObject(T* object)
     {
         GameObjectConstraint<T>();
-
-        std::type_index key(typeid(*object));
-        objects_map::iterator begin = m_objects.begin();
+        m_objects[object] = object;
+        /*std::type_index key(typeid(*object));
+        ObjectsMap::iterator begin = m_objects.begin();
         for (begin; begin != m_objects.end(); begin++)
         {
             if (begin->first == key)
             {
                 begin->second.push_back(object);
-                begin = m_objects.end();
                 return;
             }
         }
 
         std::vector<Object *> vec;
         vec.push_back(object);
-        m_objects.insert(std::make_pair(key, vec));
+        m_objects.insert(std::make_pair(key, vec));*/
     }
 
 	template <class T>
-	const Engine::objects_vec& Engine::GetObjects()
+	void Engine::GetObjects(ObjectsVec& objectsVec)
 	{
-		std::type_index key(typeid(T));
-		for (Engine::objects_map::value_type& obj : m_objects)
+        std::type_index key(typeid(T));
+        for (Engine::ObjectsMap::value_type& obj : m_objects)
+        {
+            if (key == std::type_index(obj)) {
+                T* a = obj;
+                objectsVec.push_back(a);
+            }
+        }
+		/*std::type_index key(typeid(T));
+		for (Engine::ObjectsMap::value_type& obj : m_objects)
 		{
 			if (key == obj.first)
 				return obj.second;
 		}
 
 		std::string error = std::string("type ") + std::string(key.name()) + std::string("is not defined in m_objects");
-		throw std::runtime_error(error.c_str());
+		throw std::runtime_error(error.c_str());*/
 	}
 }
 

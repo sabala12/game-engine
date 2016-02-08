@@ -4,14 +4,14 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ball.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/communication/zmq/zmq_consumer.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/communication/zmq/zmq_consumer.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/communication/zmq/zmq_publisher.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/communication/zmq/zmq_publisher.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/components/game_object.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/components/game_object.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/components/key_event_handler_impl.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/components/key_events_handler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/io_events_map.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/io_events_map.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/io_events_handler.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/io_events_handler.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/constraints/client_constraint.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/constraints/consumer_constraint.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/constraints/feature_constraint.h" isTestSource="false" />

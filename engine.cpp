@@ -18,8 +18,7 @@ namespace Engine
 	};
 
 	Engine::Engine(const EngineData& engine_data)
-		: m_display(engine_data.m_display_data), m_camera(engine_data.m_camera_data),
-          m_key_events_handler(*KeyEventsHandler<Engine::Publisher>::getInstance())
+		: m_display(engine_data.m_display_data)
 	{
         //Ball ball;
         //Walk walk(&ball);
@@ -28,16 +27,17 @@ namespace Engine
 
 	Engine::~Engine()
 	{
-		std::for_each(m_objects.begin(), m_objects.end(), [](objects_map::value_type& iter){
+		/*std::for_each(m_objects.begin(), m_objects.end(), [](ObjectsMap::value_type& iter){
 			std::for_each(iter.second.begin(), iter.second.end(), DeletePtr());
-		});
+		});*/
+		std::for_each(m_objects.begin(), m_objects.end(), DeletePtr());
 	}
 
-	void Engine::Start(const RoutingData& m_routing_data)
+	void Engine::Start()
 	{
         Awake();
         //std::thread event_keys_thread([this] {m_key_events_handler.Start(NULL);});
-        std::thread event_keys_thread(&KeyEventsHandler<Publisher >::Start, &m_key_events_handler, m_routing_data);
+        //std::thread event_keys_thread(&IOEventsHandler::Start, &m_io_events_handler);
 
         bool condition_variable = true;
 		while (condition_variable)
@@ -49,15 +49,19 @@ namespace Engine
 			m_display.Clear(0, 0, 0, 0);
 		}
 
-        event_keys_thread.join();
+        //event_keys_thread.join();
 	}
 
     void Engine::Awake()
     {
-        std::for_each(m_objects.begin(), m_objects.end(), [](objects_map::value_type& iter){
+        /*std::for_each(m_objects.begin(), m_objects.end(), [](objects_map::value_type& iter){
             std::for_each(iter.second.begin(), iter.second.end(), [](objects_map::value_type::second_type::value_type& vec_iter){
                 vec_iter->Awake();
             });
+        });*/
+
+        std::for_each(m_objects.begin(), m_objects.end(), [](ObjectsMap::value_type& object){
+            (&object)->Awake();
         });
     }
 

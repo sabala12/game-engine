@@ -5,7 +5,7 @@ namespace Engine {
 
     struct DisplayData {
 
-        DisplayData(unsigned int height, unsigned int width, const std::string& title)
+        DisplayData(Uint32 height, Uint32 width, const std::string& title)
                 : m_height(height), m_width(width), m_title(title)
         {
             if (height == 0) {
@@ -21,8 +21,8 @@ namespace Engine {
 
         inline float Ratio() { return m_ratio; }
 
-        unsigned int m_height;
-        unsigned int m_width;
+        Uint32 m_height;
+        Uint32 m_width;
         float m_ratio;
         const std::string m_title;
     };
