@@ -12,7 +12,7 @@ namespace Engine
     {
     private:
         static void constraints(Feature* feature) {
-            typename Feature::ExecuteOutput* execute_result = feature->Execute(typename Feature::ExecuteInput());
+            typename Feature::ExecuteOutput execute_result = feature->Execute(typename Feature::ExecuteInput());
         }
 
     public:

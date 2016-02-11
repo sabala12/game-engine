@@ -5,12 +5,16 @@
 #ifndef GAME_ENGINE_IO_EVENTS_HANDLER_H
 #define GAME_ENGINE_IO_EVENTS_HANDLER_H
 
-#include "io/io_events_map.h"
 #include <SDL2/SDL.h>
 
 namespace Engine
 {
     struct KeyState {
+        KeyState(SDL_Scancode scancode)
+            : scan_code(scancode)
+        {
+        }
+
         SDL_Scancode scan_code;
         Uint8 state;
     };

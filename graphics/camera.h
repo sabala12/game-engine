@@ -34,7 +34,7 @@ namespace Engine
 		const float ROTATION_SPEED = 50.0f;
 
 		float m_ratio;
-		float m_aspect;
+		float m_fov;
 		float m_zNear;
 		float m_zFar;
 

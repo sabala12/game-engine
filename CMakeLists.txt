@@ -38,7 +38,8 @@ file(GLOB TARGET_SRC
 )
 
 add_library(${PROJECT_NAME} SHARED ${TARGET_SRC})
-target_link_libraries(${PROJECT_NAME} libSDL2.so libglut.so libGL.so libGLU.so libGLEW.so libzmq.so)
+target_link_libraries(${PROJECT_NAME} libSDL2.so libglut.so libGL.so libGLU.so libGLEW.so libboost_thread.so libboost_system.so)
+#libzmq.so
 set_target_properties(${PROJECT_NAME} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 

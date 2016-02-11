@@ -5,59 +5,95 @@
 
 #include "graphics/display.h"
 #include "graphics/camera.h"
-#include "constraints/game_object_constraint.h"
-#include "communication/zmq/zmq_publisher.h"
+#include "components/scene.h"
+#include "components/state.h"
+#include "common_structs/engine_data.h"
+#include "common_structs/camera_data.h"
 #include "io/io_events_handler.h"
 
-#include <SDL2/SDL.h>
 #include <typeinfo>
-#include <typeindex>
 #include <map>
 #include <vector>
 #include <string>
-#include "common_structs/engine_data.h"
-#include "common_structs/camera_data.h"
+
+#include <SDL2/SDL.h>
+#include <boost/thread/shared_mutex.hpp>
+#include <components/game_object.h>
 
 namespace Engine
 {
 	class Object;
+    class Scene;
     struct EngineData;
 
 	class Engine
 	{
 	public:
-        typedef ZmqPublisher<std::string> Publisher;
-        typedef std::map<std::string, Camera*> CamerasMap;
-		//typedef std::map<std::type_index, ObjectsVec> ObjectsMap;
-        typedef std::vector<Object*> ObjectsVec;
-        typedef std::map<Uint32, Object*> ObjectsMap;
+        typedef std::map<std::string, Scene*> ScenesMap;
+        typedef Scene::ObjectsVec ObjectsVec;
 
 		Engine(const EngineData&);
 		virtual ~Engine();
 
 		void Start();
 		void Stop();
-        void Awake();
-		void Update();
-		void Render();
-        //void AddCamera(const std::string& key, const CameraData&);
-        //void RemoveCamera(const std::string& key);
 
-        template <class T> void AddObject(T*);
-        template <class T> void GetObjects(ObjectsVec& objectsVec);
+        void DeleteScene(const std::string& scene_key);
+        void AddScene(Scene* scene, const std::string& scene_key);
+
+        template <class T>
+        void AddObject(T* object, const std::string& scene_key);
+
+        template <class T>
+        void GetObjects(std::vector<T*>& objectsVec, const std::string& scene_key);
 
     private:
-        ObjectsMap m_objects;
+
+        void HandleEvents();
+        void HandleKeyPressEvent(size_t key);
+        SDL_Event m_event;
+
+        void Awake();
+        void Update();
+        void Render();
+        void EventLoop();
+
+        ScenesMap m_scenes;
         Display m_display;
-        //Camera m_camera;
+        State m_state;
 	};
 
     template <class T>
-    void Engine::AddObject(T* object)
+    void Engine::AddObject(T* object, const std::string& scene_key)
     {
         GameObjectConstraint<T>();
-        m_objects[object] = object;
-        /*std::type_index key(typeid(*object));
+        auto scene = m_scenes.find(scene_key);
+        if (scene != m_scenes.end()) {
+            object->SetScene((*scene).second);
+            (*scene).second->AddObject(object);
+        } else {
+            // throw runtime exception...
+        }
+    }
+
+	template <class T>
+	void Engine::GetObjects(std::vector<T*>& objectsVec, const std::string& scene_key)
+	{
+        GameObjectConstraint<T>();
+        auto scene = m_scenes.find(scene_key);
+        if (scene != m_scenes.end()) {
+            (*scene).second->GetObjects<T>(objectsVec);
+        } else {
+            // throw runtime exception...
+        }
+	}
+}
+
+#endif //GAME_ENGINE_ENGINE_H
+
+
+
+/*std::type_index key(typeid(*object));
         ObjectsMap::iterator begin = m_objects.begin();
         for (begin; begin != m_objects.end(); begin++)
         {
@@ -71,20 +107,11 @@ namespace Engine
         std::vector<Object *> vec;
         vec.push_back(object);
         m_objects.insert(std::make_pair(key, vec));*/
-    }
 
-	template <class T>
-	void Engine::GetObjects(ObjectsVec& objectsVec)
-	{
-        std::type_index key(typeid(T));
-        for (Engine::ObjectsMap::value_type& obj : m_objects)
-        {
-            if (key == std::type_index(obj)) {
-                T* a = obj;
-                objectsVec.push_back(a);
-            }
-        }
-		/*std::type_index key(typeid(T));
+
+
+
+/*std::type_index key(typeid(T));
 		for (Engine::ObjectsMap::value_type& obj : m_objects)
 		{
 			if (key == obj.first)
@@ -93,7 +120,3 @@ namespace Engine
 
 		std::string error = std::string("type ") + std::string(key.name()) + std::string("is not defined in m_objects");
 		throw std::runtime_error(error.c_str());*/
-	}
-}
-
-#endif //GAME_ENGINE_ENGINE_H

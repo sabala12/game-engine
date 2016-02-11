@@ -8,10 +8,12 @@
       <sourceFolder url="file://$MODULE_DIR$/communication/zmq/zmq_publisher.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/components/game_object.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/components/game_object.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/io_events_map.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/io_events_map.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/io_events_handler.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/io/io_events_handler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/components/scene.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/components/scene.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/components/state.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/components/state.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/components/sync.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/components/sync.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/constraints/client_constraint.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/constraints/consumer_constraint.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/constraints/feature_constraint.h" isTestSource="false" />
@@ -35,6 +37,10 @@
       <sourceFolder url="file://$MODULE_DIR$/graphics/shape_generator.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/graphics/shape_generator.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/graphics/transform.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/io_events_handler.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/io_events_handler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/io_events_map.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/io/io_events_map.h" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

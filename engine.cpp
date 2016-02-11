@@ -1,10 +1,10 @@
 #include "engine.h"
 #include "components/game_object.h"
 
-#include "ball.h"
-#include "features/walk.h"
+//#include "ball.h"
+//#include "features/walk.h"
 
-//#include <functional>
+#include <boost/thread/thread.hpp>
 
 namespace Engine
 {
@@ -18,121 +18,129 @@ namespace Engine
 	};
 
 	Engine::Engine(const EngineData& engine_data)
-		: m_display(engine_data.m_display_data)
+		: m_display(engine_data.m_display_data), m_state(false)
 	{
-        //Ball ball;
-        //Walk walk(&ball);
-        //ball.AddFeature(&walk);
 	}
 
 	Engine::~Engine()
 	{
-		/*std::for_each(m_objects.begin(), m_objects.end(), [](ObjectsMap::value_type& iter){
-			std::for_each(iter.second.begin(), iter.second.end(), DeletePtr());
-		});*/
-		std::for_each(m_objects.begin(), m_objects.end(), DeletePtr());
+        std::for_each(m_scenes.begin(), m_scenes.end(), [](ScenesMap::value_type& object) {
+            delete (&object)->second;
+        });
 	}
 
 	void Engine::Start()
 	{
-        Awake();
-        //std::thread event_keys_thread([this] {m_key_events_handler.Start(NULL);});
-        //std::thread event_keys_thread(&IOEventsHandler::Start, &m_io_events_handler);
+        //m_sync.Start(std::bind(&Engine::EventLoop, this));
+        //boost::unique_lock<boost::mutex> lock(m_sync.m_mutex);
+        /*boost::thread event_loop([this]() {
 
-        bool condition_variable = true;
-		while (condition_variable)
-		{
-			Update();
-			Render();
-
-			m_display.SwapBuffers();
-			m_display.Clear(0, 0, 0, 0);
-		}
-
-        //event_keys_thread.join();
+        });*/
+        m_state.Start();
+        this->Awake();
+        this->EventLoop();
 	}
+
+    void Engine::Stop()
+    {
+        //m_sync.Notify();
+        m_state.Stop();
+    }
+
+    void Engine::EventLoop() {
+        while (m_state.GetState()) {
+            HandleEvents();
+            Update();
+            Render();
+
+            m_display.SwapBuffers();
+            m_display.Clear(0, 0, 0, 0);
+        }
+    }
 
     void Engine::Awake()
     {
-        /*std::for_each(m_objects.begin(), m_objects.end(), [](objects_map::value_type& iter){
-            std::for_each(iter.second.begin(), iter.second.end(), [](objects_map::value_type::second_type::value_type& vec_iter){
-                vec_iter->Awake();
-            });
-        });*/
-
-        std::for_each(m_objects.begin(), m_objects.end(), [](ObjectsMap::value_type& object){
-            (&object)->Awake();
+        std::for_each(m_scenes.begin(), m_scenes.end(), [](ScenesMap::value_type& object){
+            auto scene = (&object)->second;
+            if (scene->GetState()) {
+                scene->Awake();
+            }
         });
     }
 
 	void Engine::Update()
 	{
-		std::for_each(m_objects.begin(), m_objects.end(), [](objects_map::value_type& iter){
-			std::for_each(iter.second.begin(), iter.second.end(), [](objects_map::value_type::second_type::value_type& vec_iter){
-				vec_iter->Update();
-			});
-		});
+        std::for_each(m_scenes.begin(), m_scenes.end(), [](ScenesMap::value_type& object){
+            auto scene = (&object)->second;
+            if (scene->GetState()) {
+                scene->Update();
+            }
+        });
 	}
 
 	void Engine::Render()
 	{
-		std::for_each(m_objects.begin(), m_objects.end(), [](objects_map::value_type& iter){
-			std::for_each(iter.second.begin(), iter.second.end(), [](objects_map::value_type::second_type::value_type& vec_iter){
-				vec_iter->Render();
-			});
-		});
+        std::for_each(m_scenes.begin(), m_scenes.end(), [](ScenesMap::value_type& object){
+            auto scene = (&object)->second;
+            if (scene->GetState()) {
+                scene->Render();
+            }
+        });
 	}
 
-//	void GameEngine::HandleEvents()
-//	{
-//		SDL_PollEvent(&m_event);
-//		if (m_event.type == SDL_QUIT)
-//			m_running = false;
-//		if (m_event.type == SDL_MOUSEMOTION)
-//			m_camera.mouseUpdate(glm::vec2(m_event.motion.x, m_event.motion.y));
-//		if (m_event.type == SDL_KEYDOWN)
-//			HandleKeyPressEvent(m_event.key.keysym.scancode);
-//	}
+    void Engine::DeleteScene(const std::string& scene_key) {
+        auto iter = m_scenes.find(scene_key);
+        if (iter != m_scenes.end()) {
+            delete iter->second;
+            m_scenes.erase(iter);
+        } else {
+            // throw runtime exception...
+        }
+    }
 
-//	void GameEngine::HandleKeyPressEvent(size_t key)
-//	{
-//		switch (key)
-//		{
-//		case SDL_SCANCODE_A:
-//			m_camera.strafeLeft();
-//			break;
-//		case SDL_SCANCODE_D:
-//			m_camera.strafeRight();
-//			break;
-//		case SDL_SCANCODE_W:
-//			m_camera.moveUp();
-//			break;
-//		case SDL_SCANCODE_S:
-//			m_camera.moveDown();
-//			break;
-//		case SDL_SCANCODE_E:
-//			m_camera.moveForward();
-//			break;
-//		case SDL_SCANCODE_Q:
-//			m_camera.moveBackward();
-//			break;
-//		default:
-//			break;
-//		}
-//	}
+    void Engine::AddScene(Scene* scene, const std::string& scene_key) {
 
-	//void GameEngine::MoveBord(const glm::vec3& dir)
-	//{
-	//	//case SDL_SCANCODE_KP_2:
-	//	//	MoveBord(glm::vec3(0.0f, -m_bordSpeed, 0.0f));
-	//	//case SDL_SCANCODE_KP_4:
-	//		//MoveBord(glm::vec3(0.0f, 0.0f, -m_bordSpeed));
-	//		//case SDL_SCANCODE_KP_6:
-	//		//	MoveBord(glm::vec3(0.0f, 0.0f, m_bordSpeed));
-	//		//case SDL_SCANCODE_KP_8:
-	//		//	MoveBord(glm::vec3(0.0f, m_bordSpeed, 0.0f));
-	//		//	break;
-	//	auto bord = (*m_objects.at(std::type_index(typeid(Bord))).begin());
-	//	bord->m_transform->SetPos(bord->m_transform->GetPos() + dir);
-	//}
+        auto iter = m_scenes.find(scene_key);
+        if (iter != m_scenes.end()) {
+            // throw runtime exception...
+        } else {
+            m_scenes.insert(std::make_pair(scene_key, scene));
+        }
+    }
+
+    void Engine::HandleEvents()
+    {
+        SDL_PollEvent(&m_event);
+        if (m_event.type == SDL_MOUSEMOTION)
+            m_scenes.begin()->second->GetCamera().mouseUpdate(glm::vec2(m_event.motion.x, m_event.motion.y));
+        if (m_event.type == SDL_KEYDOWN)
+            HandleKeyPressEvent(m_event.key.keysym.scancode);
+    }
+
+    void Engine::HandleKeyPressEvent(size_t key)
+    {
+        switch (key)
+        {
+            case SDL_SCANCODE_A:
+                m_scenes.begin()->second->GetCamera().strafeLeft();
+                break;
+            case SDL_SCANCODE_D:
+                m_scenes.begin()->second->GetCamera().strafeRight();
+                break;
+            case SDL_SCANCODE_W:
+                m_scenes.begin()->second->GetCamera().moveUp();
+                break;
+            case SDL_SCANCODE_S:
+                m_scenes.begin()->second->GetCamera().moveDown();
+                break;
+            case SDL_SCANCODE_E:
+                m_scenes.begin()->second->GetCamera().moveForward();
+                break;
+            case SDL_SCANCODE_Q:
+                m_scenes.begin()->second->GetCamera().moveBackward();
+                break;
+            default:
+                break;
+        }
+    }
 }

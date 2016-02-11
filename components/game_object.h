@@ -11,21 +11,21 @@
 
 namespace Engine
 {
+    struct ObjectData;
 	class Engine;
 	class Mesh;
 	class Shader;
 	class Feature;
+	class Scene;
 
 	class Object
 	{
 	public:
 		friend class Feature;
-		typedef std::map<std::type_index, Feature*> features_map;
+		typedef std::map<std::type_index, Feature*> FeaturesMap;
+        typedef std::vector<Object*> Listeners;
 
-        Object(){
-
-        }
-		Object(Engine * father, Mesh* mesh, Shader* shader, Transform* transform);
+		Object(const ObjectData& objectData);
 		virtual ~Object();
 
 		virtual void Awake() = 0;
@@ -38,19 +38,25 @@ namespace Engine
 		template <class T>
 		T* GetFeature();
 
+
+		const std::string& GetName() const;
+		void SetScene(Scene* scene);
 		// with some command oprition...
 		//virtual void SubScribe(Object* obj);
 		//virtual void UnSubScribe(Object* obj);
 
+	Transform* m_transform;
 	protected:
 		Mesh* m_mesh;
 		Shader* m_shader;
+
 		Engine * m_father;
-        Transform* m_transform;
+		Scene* m_scene;
 
 	private:
-        features_map m_features;
-		//std::vector<Object*> m_listenrs;
+        FeaturesMap m_features;
+        Listeners m_listeners;
+        const std::string m_name;
 	};
 
 	template <class T>
@@ -63,7 +69,7 @@ namespace Engine
 	T*Object::GetFeature()
 	{
         FeatureConstraint<T>();
-        features_map::iterator iter = m_features.begin();
+        FeaturesMap::iterator iter = m_features.begin();
 		std::type_index key(typeid(T));
 		for (iter; iter != m_features.end(); iter++)
 		{

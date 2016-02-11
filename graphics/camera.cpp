@@ -5,7 +5,7 @@ namespace Engine
 {
 	Camera::Camera(const CameraData& cameraData)
 		: m_pos(cameraData.m_pos), m_direction(cameraData.m_direction), m_up(cameraData.m_up),
-		  m_ratio(cameraData.m_ratio), m_aspect(cameraData.m_aspect), m_zNear(cameraData.m_znear),
+		  m_ratio(cameraData.m_ratio), m_fov(cameraData.m_fov), m_zNear(cameraData.m_znear),
 		  m_zFar(cameraData.m_zfar), m_mousePos(cameraData.m_mouse_pos)
 	{
 		m_strafeDirection = glm::cross(m_direction, m_up);
@@ -71,7 +71,7 @@ namespace Engine
 
 	void Camera::UpdateViewProjection()
 	{
-		m_viewProjection = glm::perspective(m_ratio, m_aspect, m_zNear, m_zFar) *
+		m_viewProjection = glm::perspective(m_ratio, m_fov, m_zNear, m_zFar) *
 			glm::lookAt(m_pos, m_pos + m_direction, m_up);
 	}
 	
