@@ -17,5 +17,4 @@ namespace Engine {
             keys[i].state = state[keys[i].scan_code];
         }
    }
-
 }

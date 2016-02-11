@@ -31,11 +31,6 @@ namespace Engine
 
 	void Engine::Start()
 	{
-        //m_sync.Start(std::bind(&Engine::EventLoop, this));
-        //boost::unique_lock<boost::mutex> lock(m_sync.m_mutex);
-        /*boost::thread event_loop([this]() {
-
-        });*/
         m_state.Start();
         this->Awake();
         this->EventLoop();
@@ -43,12 +38,12 @@ namespace Engine
 
     void Engine::Stop()
     {
-        //m_sync.Notify();
         m_state.Stop();
     }
 
     void Engine::EventLoop() {
-        while (m_state.GetState()) {
+        while (m_state.GetState())
+        {
             HandleEvents();
             Update();
             Render();

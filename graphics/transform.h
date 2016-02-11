@@ -36,7 +36,7 @@ namespace Engine
 			glm::mat4 VP = camera.GetViewProjection();
 			glm::mat4 M = GetModel();
 
-			return VP * M;//camera.GetViewProjection() * GetModel();
+			return VP * M; //camera.GetViewProjection() * GetModel();
 		}
 		
 		inline const glm::vec3& GetPos() { return m_pos; }
